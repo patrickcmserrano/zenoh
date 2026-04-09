@@ -7,8 +7,8 @@ dist
 docs-viewer/dist
 docs-viewer/dist-ssr
 
-# Generated docs for viewer
-docs-viewer/public/docs
+# Generated docs list
+# We can keep this ignored as it's a build/run artifact
 docs-viewer/public/docs-list.json
 
 # Logs

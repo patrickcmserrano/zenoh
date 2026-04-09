@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predev": "find ../docs ../co-creation -name '*.md' | sed 's|^../||' > public/docs-list.json && echo 'ROOT_README.md' >> public/docs-list.json && node -e \"const fs = require('fs'); const docs = fs.readFileSync('public/docs-list.json', 'utf8').trim().split('\\n'); fs.writeFileSync('public/docs-list.json', JSON.stringify(docs));\"",
+    "prebuild": "npm run predev"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.0.0",

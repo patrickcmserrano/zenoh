@@ -1,10 +1,11 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { marked } from 'marked';
   import Genesis from './Genesis.svelte';
 
   let mode = $state('genesis'); 
   let docs = $state([]);
+  let groupedDocs = $state({});
   let audioMap = $state({});
   let selectedDoc = $state(null);
   let content = $state('');
@@ -15,45 +16,104 @@
   let audioEl = $state(null);
   let currentTime = $state(0);
   let duration = $state(0);
+  let playbackRate = $state(1.0);
 
   onMount(async () => {
     try {
       const res = await fetch('/docs-list.json');
-      docs = await res.json();
+      const flatList = await res.json();
+      docs = flatList;
       
       const audioRes = await fetch('/audio-map.json');
       audioMap = await audioRes.json();
+
+      const groups = {};
+      flatList.forEach(path => {
+        const parts = path.split('/');
+        let groupName = parts.length > 1 ? parts[0].toUpperCase() : 'CORE';
+        if (groupName === 'DOCS' && parts.length > 2) {
+          groupName = parts[1].toUpperCase();
+        }
+        if (!groups[groupName]) groups[groupName] = [];
+        
+        // Clean display name
+        let displayName = parts[parts.length - 1];
+        if (displayName === 'ROOT_README.md') displayName = 'README.md';
+
+        groups[groupName].push({
+          name: displayName,
+          path: path,
+          hasAudio: !!(audioMap[path] || audioMap[path.replace('docs/', '')])
+        });
+      });
+      groupedDocs = groups;
+
+      window.addEventListener('hashchange', handleHashChange);
+      handleHashChange(); 
     } catch (e) {
       console.error('Falha ao carregar dados:', e);
     }
   });
 
-  async function loadDoc(doc) {
-    selectedDoc = doc;
-    const res = await fetch(`/docs/${doc}`);
-    const text = await res.text();
+  onDestroy(() => {
+    window.removeEventListener('hashchange', handleHashChange);
+  });
 
-    if (text.trim().startsWith('<!DOCTYPE html>')) {
-      content = '<p style="color:red">Documento não encontrado ou erro no servidor.</p>';
+  function handleHashChange() {
+    const hash = window.location.hash.replace('#', '');
+    if (!hash || hash === 'genesis' || hash === '/') {
+      mode = 'genesis';
     } else {
-      content = await marked(text);
+      mode = 'docs';
+      if (docs.includes(hash)) {
+        loadDoc(hash);
+      } else if (docs.length > 0) {
+        window.location.hash = '#' + docs[0];
+      }
     }
+  }
+
+  async function loadDoc(docPath) {
+    if (selectedDoc === docPath) return; 
+    selectedDoc = docPath;
     
-    if (audioMap[doc]) {
-      audioSrc = audioMap[doc];
-    } else {
-      audioSrc = '';
+    // Fetch directly from symlinks in public/
+    let fetchPath = `/${docPath}`;
+
+    try {
+      const res = await fetch(fetchPath);
+      const text = await res.text();
+
+      if (text.trim().startsWith('<!DOCTYPE html>')) {
+        content = '<p style="color:red">Documento não encontrado ou erro no servidor.</p>';
+      } else {
+        content = await marked(text);
+      }
+      
+      const foundAudio = audioMap[docPath] || audioMap[docPath.replace('docs/', '')];
+      if (foundAudio) {
+        audioSrc = foundAudio;
+      } else {
+        audioSrc = '';
+      }
+      
+      playing = false;
+      currentTime = 0;
+      playbackRate = 1.0;
+    } catch (e) {
+      content = '<p style="color:red">Erro ao carregar documento.</p>';
     }
-    playing = false;
   }
 
   function togglePlay() {
     if (!audioEl) return;
-    if (playing) {
-      audioEl.pause();
-    } else {
-      audioEl.play();
-    }
+    playing ? audioEl.pause() : audioEl.play();
+  }
+
+  function cycleRate() {
+    if (!audioEl) return;
+    playbackRate = playbackRate === 1.0 ? 1.5 : playbackRate === 1.5 ? 2.0 : 1.0;
+    audioEl.playbackRate = playbackRate;
   }
 
   function seek(e) {
@@ -71,14 +131,15 @@
   }
 
   function enterDocs() {
-    mode = 'docs';
-    if (docs.length > 0 && !selectedDoc) {
-      loadDoc(docs[0]);
-    }
+    window.location.hash = '#' + (selectedDoc || docs[0]);
   }
 
   function backToGenesis() {
-    mode = 'genesis';
+    window.location.hash = '#genesis';
+  }
+
+  function navigateToDoc(docPath) {
+    window.location.hash = '#' + docPath;
   }
 </script>
 
@@ -87,20 +148,25 @@
 {:else}
   <div class="layout">
     <aside>
-      <div class="sidebar-content">
+      <div class="sidebar-scroll-area">
         <div class="sidebar-header" onclick={backToGenesis} onkeydown={backToGenesis} role="button" tabindex="0">
           <h3 class="zenoh-sidebar-title">ZENOH</h3>
           <p>← VOLTAR PARA GENESIS</p>
         </div>
         <nav>
-          <ul>
-            {#each docs as doc}
-              <li class:active={selectedDoc === doc} onclick={() => loadDoc(doc)} onkeydown={() => loadDoc(doc)} role="button" tabindex="0">
-                {#if audioMap[doc]}<span class="audio-dot"></span>{/if}
-                {doc}
-              </li>
-            {/each}
-          </ul>
+          {#each Object.entries(groupedDocs) as [group, items]}
+            <div class="nav-group">
+              <h4 class="group-title">{group}</h4>
+              <ul>
+                {#each items as item}
+                  <li class:active={selectedDoc === item.path} onclick={() => navigateToDoc(item.path)} onkeydown={() => navigateToDoc(item.path)} role="button" tabindex="0">
+                    {#if item.hasAudio}<span class="audio-dot"></span>{/if}
+                    {item.name}
+                  </li>
+                {/each}
+              </ul>
+            </div>
+          {/each}
         </nav>
       </div>
 
@@ -114,6 +180,9 @@
               <span class="player-label">AUDIO LOG</span>
               <span class="player-time">{fmt(currentTime)} / {fmt(duration)}</span>
             </div>
+            <button class="rate-btn" onclick={cycleRate}>
+              {playbackRate}x
+            </button>
           </div>
           <div class="timeline-container" onclick={seek} onkeydown={seek} role="progressbar" aria-valuenow={currentTime} aria-valuemax={duration} tabindex="0">
             <div class="timeline-bg">
@@ -139,7 +208,10 @@
       onplay={() => (playing = true)}
       onpause={() => (playing = false)}
       ontimeupdate={() => (currentTime = audioEl?.currentTime ?? 0)}
-      onloadedmetadata={() => (duration = audioEl?.duration ?? 0)}
+      onloadedmetadata={() => {
+        duration = audioEl?.duration ?? 0;
+        audioEl.playbackRate = playbackRate;
+      }}
       onended={() => (playing = false)}
     ></audio>
   {/if}
@@ -151,7 +223,7 @@
   }
 
   :global(html) {
-    font-size: 130%; /* Base font scale +30% */
+    font-size: 130%; 
   }
 
   :global(body) {
@@ -168,7 +240,7 @@
 
   .layout {
     display: grid;
-    grid-template-columns: 380px 1fr; /* Increased to accommodate larger fonts */
+    grid-template-columns: 380px 1fr;
     width: 100vw;
     height: 100vh;
     background: #050505;
@@ -190,13 +262,15 @@
     display: flex;
     flex-direction: column;
     border-right: 1px solid #111;
-    height: 100%;
+    height: 100vh;
     justify-content: space-between;
+    overflow: hidden;
   }
 
-  .sidebar-content {
+  .sidebar-scroll-area {
     flex: 1;
     overflow-y: auto;
+    min-height: 0; 
     display: flex;
     flex-direction: column;
   }
@@ -205,6 +279,11 @@
     padding: 1.5rem;
     border-bottom: 1px solid #111;
     flex-shrink: 0;
+    cursor: pointer;
+    background: #000;
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
 
   .zenoh-sidebar-title {
@@ -225,6 +304,21 @@
 
   nav {
     padding: 1rem;
+    flex: 1;
+  }
+
+  .nav-group {
+    margin-bottom: 2rem;
+  }
+
+  .group-title {
+    font-size: 0.65rem;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+    border-left: 1px solid #111;
   }
 
   ul {
@@ -270,7 +364,6 @@
     font-weight: 500;
   }
 
-  /* Sidebar Player */
   .sidebar-player {
     background: #050505;
     padding: 1.5rem;
@@ -304,6 +397,25 @@
   .play-btn:hover {
     border-color: #00F5FF;
     box-shadow: 0 0 10px rgba(0, 245, 255, 0.2);
+  }
+
+  .rate-btn {
+    background: none;
+    border: 1px solid #1A1A1A;
+    color: #666;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+    margin-left: auto;
+  }
+
+  .rate-btn:hover {
+    color: #00F5FF;
+    border-color: #00F5FF;
+    background: rgba(0, 245, 255, 0.05);
   }
 
   .player-meta {
@@ -359,6 +471,7 @@
   article {
     width: 100%;
     max-width: 900px;
+    margin: 0 auto;
     line-height: 1.8;
     color: #d4d4d4;
   }
@@ -403,8 +516,8 @@
     background: rgba(0, 245, 255, 0.02);
   }
 
-  main::-webkit-scrollbar { width: 6px; }
-  main::-webkit-scrollbar-track { background: #050505; }
-  main::-webkit-scrollbar-thumb { background: #111; }
-  main::-webkit-scrollbar-thumb:hover { background: #00F5FF; }
+  main::-webkit-scrollbar, .sidebar-scroll-area::-webkit-scrollbar { width: 6px; }
+  main::-webkit-scrollbar-track, .sidebar-scroll-area::-webkit-scrollbar-track { background: #050505; }
+  main::-webkit-scrollbar-thumb, .sidebar-scroll-area::-webkit-scrollbar-thumb { background: #111; }
+  main::-webkit-scrollbar-thumb:hover, .sidebar-scroll-area::-webkit-scrollbar-thumb:hover { background: #00F5FF; }
 </style>
