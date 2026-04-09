@@ -49,6 +49,7 @@
       groupedDocs = groups;
 
       window.addEventListener('hashchange', handleHashChange);
+      window.addEventListener('keydown', handleKeydown);
       handleHashChange(); 
     } catch (e) {
       console.error('Falha ao carregar dados:', e);
@@ -57,7 +58,15 @@
 
   onDestroy(() => {
     window.removeEventListener('hashchange', handleHashChange);
+    window.removeEventListener('keydown', handleKeydown);
   });
+
+  function handleKeydown(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+      e.preventDefault();
+      toggleSidebar();
+    }
+  }
 
   function handleHashChange() {
     const hash = window.location.hash.replace('#', '');
@@ -151,9 +160,14 @@
   <div class="layout" class:collapsed={sidebarCollapsed}>
     <aside>
       <div class="sidebar-scroll-area">
-        <div class="sidebar-header" onclick={backToGenesis} onkeydown={backToGenesis} role="button" tabindex="0">
-          <h3 class="zenoh-sidebar-title">ZENOH</h3>
-          <p>← VOLTAR PARA GENESIS</p>
+        <div class="sidebar-header">
+          <div class="header-main" onclick={backToGenesis} onkeydown={backToGenesis} role="button" tabindex="0">
+            <h3 class="zenoh-sidebar-title">ZENOH</h3>
+            <p>← GENESIS</p>
+          </div>
+          <button class="collapse-btn-inner" onclick={toggleSidebar} title="Recolher (Ctrl+B)">
+            ←
+          </button>
         </div>
         <nav>
           {#each Object.entries(groupedDocs) as [group, items]}
@@ -195,8 +209,8 @@
       {/if}
     </aside>
 
-    <button class="sidebar-toggle" onclick={toggleSidebar} aria-label="Toggle Sidebar">
-      {sidebarCollapsed ? '→' : '←'}
+    <button class="floating-toggle" class:visible={sidebarCollapsed} onclick={toggleSidebar} aria-label="Abrir Sidebar">
+      →
     </button>
 
     <main>
@@ -291,11 +305,17 @@
     padding: 1.5rem;
     border-bottom: 1px solid #111;
     flex-shrink: 0;
-    cursor: pointer;
     background: #000;
     position: sticky;
     top: 0;
     z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header-main {
+    cursor: pointer;
   }
 
   .zenoh-sidebar-title {
@@ -310,8 +330,25 @@
   .sidebar-header p {
     font-size: 0.6rem;
     color: #444;
-    margin: 0.5rem 0 0 0;
+    margin: 0.2rem 0 0 0;
     letter-spacing: 0.1em;
+  }
+
+  .collapse-btn-inner {
+    background: none;
+    border: 1px solid #111;
+    color: #333;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+  }
+
+  .collapse-btn-inner:hover {
+    color: #00F5FF;
+    border-color: #00F5FF;
+    background: rgba(0, 245, 255, 0.05);
   }
 
   nav {
@@ -376,9 +413,9 @@
     font-weight: 500;
   }
 
-  .sidebar-toggle {
+  .floating-toggle {
     position: fixed;
-    bottom: 2rem;
+    top: 1.5rem;
     left: 1.5rem;
     z-index: 100;
     background: #000;
@@ -387,21 +424,21 @@
     width: 2.5rem;
     height: 2.5rem;
     cursor: pointer;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
-    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    transition: all 0.3s;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   }
 
-  .sidebar-toggle:hover {
-    border-color: #00F5FF;
-    box-shadow: 0 0 15px rgba(0, 245, 255, 0.2);
+  .floating-toggle.visible {
+    display: flex;
   }
 
-  .layout.collapsed .sidebar-toggle {
-    left: 1.5rem;
+  .floating-toggle:hover {
+    border-color: #00F5FF;
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.2);
   }
 
   .sidebar-player {
