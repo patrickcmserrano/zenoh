@@ -150,7 +150,7 @@ async def main():
             key = doc.removeprefix(DOCS_PREFIX)
             audio_map[key] = f"/audio/{slug}.mp3"
 
-    AUDIO_MAP.write_text(json.dumps(audio_map, indent=2, ensure_ascii=False))
+    AUDIO_MAP.write_text(json.dumps(audio_map, indent=2, ensure_ascii=False, sort_keys=True))
     print()
     print(f"audio-map.json atualizado: {len(audio_map)} entradas")
 
