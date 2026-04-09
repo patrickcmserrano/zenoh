@@ -9,6 +9,7 @@
   let audioMap = $state({});
   let selectedDoc = $state(null);
   let content = $state('');
+  let sidebarCollapsed = $state(false);
   
   // Audio state
   let audioSrc = $state('');
@@ -36,7 +37,6 @@
         }
         if (!groups[groupName]) groups[groupName] = [];
         
-        // Clean display name
         let displayName = parts[parts.length - 1];
         if (displayName === 'ROOT_README.md') displayName = 'README.md';
 
@@ -68,7 +68,7 @@
       if (docs.includes(hash)) {
         loadDoc(hash);
       } else if (docs.length > 0) {
-        window.location.hash = '#' + docs[0];
+        window.location.hash = '#' + (selectedDoc || 'docs/genesis.md');
       }
     }
   }
@@ -76,8 +76,6 @@
   async function loadDoc(docPath) {
     if (selectedDoc === docPath) return; 
     selectedDoc = docPath;
-    
-    // Fetch directly from symlinks in public/
     let fetchPath = `/${docPath}`;
 
     try {
@@ -141,12 +139,16 @@
   function navigateToDoc(docPath) {
     window.location.hash = '#' + docPath;
   }
+
+  function toggleSidebar() {
+    sidebarCollapsed = !sidebarCollapsed;
+  }
 </script>
 
 {#if mode === 'genesis'}
   <Genesis onEnterDocs={enterDocs} />
 {:else}
-  <div class="layout">
+  <div class="layout" class:collapsed={sidebarCollapsed}>
     <aside>
       <div class="sidebar-scroll-area">
         <div class="sidebar-header" onclick={backToGenesis} onkeydown={backToGenesis} role="button" tabindex="0">
@@ -192,6 +194,10 @@
         </div>
       {/if}
     </aside>
+
+    <button class="sidebar-toggle" onclick={toggleSidebar} aria-label="Toggle Sidebar">
+      {sidebarCollapsed ? '→' : '←'}
+    </button>
 
     <main>
       <article>
@@ -249,6 +255,11 @@
     position: relative;
     z-index: 20;
     overflow: hidden;
+    transition: grid-template-columns 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  .layout.collapsed {
+    grid-template-columns: 0px 1fr;
   }
 
   @keyframes slideUp {
@@ -265,6 +276,7 @@
     height: 100vh;
     justify-content: space-between;
     overflow: hidden;
+    width: 380px;
   }
 
   .sidebar-scroll-area {
@@ -362,6 +374,34 @@
     background: #0a0a0a;
     color: #00F5FF;
     font-weight: 500;
+  }
+
+  .sidebar-toggle {
+    position: fixed;
+    bottom: 2rem;
+    left: 1.5rem;
+    z-index: 100;
+    background: #000;
+    border: 1px solid #111;
+    color: #00F5FF;
+    width: 2.5rem;
+    height: 2.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  }
+
+  .sidebar-toggle:hover {
+    border-color: #00F5FF;
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.2);
+  }
+
+  .layout.collapsed .sidebar-toggle {
+    left: 1.5rem;
   }
 
   .sidebar-player {
@@ -516,8 +556,16 @@
     background: rgba(0, 245, 255, 0.02);
   }
 
-  main::-webkit-scrollbar, .sidebar-scroll-area::-webkit-scrollbar { width: 6px; }
-  main::-webkit-scrollbar-track, .sidebar-scroll-area::-webkit-scrollbar-track { background: #050505; }
-  main::-webkit-scrollbar-thumb, .sidebar-scroll-area::-webkit-scrollbar-thumb { background: #111; }
-  main::-webkit-scrollbar-thumb:hover, .sidebar-scroll-area::-webkit-scrollbar-thumb:hover { background: #00F5FF; }
+  main::-webkit-scrollbar, .sidebar-scroll-area::-webkit-scrollbar {
+    width: 6px;
+  }
+  main::-webkit-scrollbar-track, .sidebar-scroll-area::-webkit-scrollbar-track {
+    background: #050505;
+  }
+  main::-webkit-scrollbar-thumb, .sidebar-scroll-area::-webkit-scrollbar-thumb {
+    background: #111;
+  }
+  main::-webkit-scrollbar-thumb:hover, .sidebar-scroll-area::-webkit-scrollbar-thumb:hover {
+    background: #00F5FF;
+  }
 </style>
