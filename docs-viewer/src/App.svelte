@@ -21,11 +21,11 @@
 
   onMount(async () => {
     try {
-      const res = await fetch('/docs-list.json');
+      const res = await fetch('docs-list.json');
       const flatList = await res.json();
       docs = flatList;
       
-      const audioRes = await fetch('/audio-map.json');
+      const audioRes = await fetch('audio-map.json');
       audioMap = await audioRes.json();
 
       const groups = {};
@@ -85,7 +85,7 @@
   async function loadDoc(docPath) {
     if (selectedDoc === docPath) return; 
     selectedDoc = docPath;
-    let fetchPath = `/${docPath}`;
+    let fetchPath = docPath;
 
     try {
       const res = await fetch(fetchPath);
