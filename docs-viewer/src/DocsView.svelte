@@ -19,10 +19,12 @@
   let currentTime = $state(0);
   let duration    = $state(0);
 
+  const BASE = import.meta.env.BASE_URL.replace(/\/$/, ''); // Remove barra final se houver
+
   onMount(async () => {
     const [docsRes, audioRes] = await Promise.all([
-      fetch('/docs-list.json'),
-      fetch('/audio-map.json').catch(() => ({ ok: false })),
+      fetch(`${BASE}/docs-list.json`),
+      fetch(`${BASE}/audio-map.json`).catch(() => ({ ok: false })),
     ]);
     docs = await docsRes.json();
     if (audioRes.ok) audioMap = await audioRes.json();
@@ -33,9 +35,8 @@
     selectedDoc = doc;
     isSidebarOpen = false; // Fecha no mobile ao selecionar
     
-    // docs-list.json já contém os caminhos relativos à raiz do servidor (ex: "docs/genesis.md")
-    // Então o fetch deve ser direto na raiz.
-    const res  = await fetch(`/${doc}`);
+    // docs-list.json já contém os caminhos relativos (ex: "docs/genesis.md")
+    const res  = await fetch(`${BASE}/${doc}`);
     const text = await res.text();
     html = text.trim().startsWith('<!DOCTYPE')
       ? '<p style="color:red">Documento não encontrado.</p>'
@@ -43,8 +44,12 @@
 
     // O audio-map.json usa o nome do arquivo SEM o prefixo "docs/", se houver.
     const audioKey = doc.startsWith('docs/') ? doc.substring(5) : doc;
-    const src = audioMap[audioKey] ?? null;
+    let src = audioMap[audioKey] ?? null;
     
+    if (src && !src.startsWith('http') && !src.startsWith(BASE)) {
+      src = `${BASE}${src}`;
+    }
+
     if (src !== audioSrc) {
       audioSrc    = src;
       playing     = false;
