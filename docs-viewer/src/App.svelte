@@ -161,57 +161,68 @@
     <aside>
       <div class="sidebar-scroll-area">
         <div class="sidebar-header">
-          <div class="header-main" onclick={backToGenesis} onkeydown={backToGenesis} role="button" tabindex="0">
-            <h3 class="zenoh-sidebar-title">ZENOH</h3>
-            <p>← GENESIS</p>
-          </div>
-          <button class="collapse-btn-inner" onclick={toggleSidebar} title="Recolher (Ctrl+B)">
-            ←
+          {#if !sidebarCollapsed}
+            <div class="header-main" onclick={backToGenesis} onkeydown={backToGenesis} role="button" tabindex="0">
+              <h3 class="zenoh-sidebar-title">ZENOH</h3>
+              <p>← GENESIS</p>
+            </div>
+          {:else}
+            <div class="header-icon" onclick={toggleSidebar} role="button" tabindex="0">Z</div>
+          {/if}
+          <button class="collapse-btn-inner" onclick={toggleSidebar} title="Alternar Barra (Ctrl+B)">
+            {sidebarCollapsed ? '→' : '←'}
           </button>
         </div>
-        <nav>
-          {#each Object.entries(groupedDocs) as [group, items]}
-            <div class="nav-group">
-              <h4 class="group-title">{group}</h4>
-              <ul>
-                {#each items as item}
-                  <li class:active={selectedDoc === item.path} onclick={() => navigateToDoc(item.path)} onkeydown={() => navigateToDoc(item.path)} role="button" tabindex="0">
-                    {#if item.hasAudio}<span class="audio-dot"></span>{/if}
-                    {item.name}
-                  </li>
-                {/each}
-              </ul>
-            </div>
-          {/each}
-        </nav>
+        
+        {#if !sidebarCollapsed}
+          <nav>
+            {#each Object.entries(groupedDocs) as [group, items]}
+              <div class="nav-group">
+                <h4 class="group-title">{group}</h4>
+                <ul>
+                  {#each items as item}
+                    <li class:active={selectedDoc === item.path} onclick={() => navigateToDoc(item.path)} role="button" tabindex="0">
+                      {#if item.hasAudio}<span class="audio-dot"></span>{/if}
+                      {item.name}
+                    </li>
+                  {/each}
+                </ul>
+              </div>
+            {/each}
+          </nav>
+        {/if}
       </div>
 
       {#if audioSrc}
-        <div class="sidebar-player">
+        <div class="sidebar-player" class:mini-player={sidebarCollapsed}>
           <div class="player-controls">
-            <button class="play-btn" onclick={togglePlay}>
+            <button class="play-btn" onclick={togglePlay} title={playing ? 'Pause' : 'Play'}>
               {playing ? '⏸' : '▶'}
             </button>
-            <div class="player-meta">
-              <span class="player-label">AUDIO LOG</span>
-              <span class="player-time">{fmt(currentTime)} / {fmt(duration)}</span>
-            </div>
-            <button class="rate-btn" onclick={cycleRate}>
-              {playbackRate}x
-            </button>
+            {#if !sidebarCollapsed}
+              <div class="player-meta">
+                <span class="player-label">AUDIO LOG</span>
+                <span class="player-time">{fmt(currentTime)} / {fmt(duration)}</span>
+              </div>
+              <button class="rate-btn" onclick={cycleRate}>
+                {playbackRate}x
+              </button>
+            {/if}
           </div>
-          <div class="timeline-container" onclick={seek} onkeydown={seek} role="progressbar" aria-valuenow={currentTime} aria-valuemax={duration} tabindex="0">
-            <div class="timeline-bg">
-              <div class="timeline-progress" style="width: {(currentTime / duration) * 100}%"></div>
+          {#if !sidebarCollapsed}
+            <div class="timeline-container" onclick={seek} role="progressbar">
+              <div class="timeline-bg">
+                <div class="timeline-progress" style="width: {(currentTime / duration) * 100}%"></div>
+              </div>
             </div>
-          </div>
+          {:else}
+            <div class="mini-progress-vertical">
+              <div class="mini-progress-fill" style="height: {(currentTime / duration) * 100}%"></div>
+            </div>
+          {/if}
         </div>
       {/if}
     </aside>
-
-    <button class="floating-toggle" class:visible={sidebarCollapsed} onclick={toggleSidebar} aria-label="Abrir Sidebar">
-      →
-    </button>
 
     <main>
       <article>
@@ -238,47 +249,26 @@
 {/if}
 
 <style>
-  :global(*) {
-    box-sizing: border-box;
-  }
-
-  :global(html) {
-    font-size: 130%; 
-  }
-
+  :global(*) { box-sizing: border-box; }
+  :global(html) { font-size: 130%; }
   :global(body) {
-    margin: 0;
-    padding: 0;
+    margin: 0; padding: 0;
     font-family: 'Space Grotesk', sans-serif;
-    background: #000;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-    color: #fff;
-    line-height: 1.6;
+    background: #000; overflow: hidden;
+    width: 100%; height: 100%; color: #fff; line-height: 1.6;
   }
 
   .layout {
     display: grid;
     grid-template-columns: 380px 1fr;
-    width: 100vw;
-    height: 100vh;
-    background: #050505;
-    color: #d4d4d4;
-    animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-    position: relative;
-    z-index: 20;
-    overflow: hidden;
+    width: 100vw; height: 100vh;
+    background: #050505; color: #d4d4d4;
+    position: relative; z-index: 20; overflow: hidden;
     transition: grid-template-columns 0.4s cubic-bezier(0.19, 1, 0.22, 1);
   }
 
   .layout.collapsed {
-    grid-template-columns: 0px 1fr;
-  }
-
-  @keyframes slideUp {
-    from { transform: translateY(100vh); }
-    to { transform: translateY(0); }
+    grid-template-columns: 80px 1fr;
   }
 
   aside {
@@ -290,13 +280,14 @@
     height: 100vh;
     justify-content: space-between;
     overflow: hidden;
-    width: 380px;
+    transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1);
   }
 
   .sidebar-scroll-area {
     flex: 1;
     overflow-y: auto;
-    min-height: 0; 
+    overflow-x: hidden;
+    min-height: 0;
     display: flex;
     flex-direction: column;
   }
@@ -312,10 +303,18 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    min-height: 100px;
   }
 
-  .header-main {
+  .header-icon {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #00F5FF;
+    text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
     cursor: pointer;
+    width: 100%;
+    text-align: center;
   }
 
   .zenoh-sidebar-title {
@@ -348,261 +347,112 @@
   .collapse-btn-inner:hover {
     color: #00F5FF;
     border-color: #00F5FF;
-    background: rgba(0, 245, 255, 0.05);
   }
 
-  nav {
-    padding: 1rem;
-    flex: 1;
+  .layout.collapsed .collapse-btn-inner {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    border: none;
   }
 
-  .nav-group {
-    margin-bottom: 2rem;
-  }
-
+  nav { padding: 1rem; flex: 1; }
+  .nav-group { margin-bottom: 2rem; }
   .group-title {
-    font-size: 0.65rem;
-    color: #333;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    margin-bottom: 1rem;
-    padding-left: 1rem;
+    font-size: 0.65rem; color: #333; text-transform: uppercase;
+    letter-spacing: 0.2em; margin-bottom: 1rem; padding-left: 1rem;
     border-left: 1px solid #111;
   }
 
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
+  ul { list-style: none; padding: 0; margin: 0; }
   li {
-    padding: 0.7rem 1rem;
-    cursor: pointer;
-    border-radius: 6px;
-    margin-bottom: 0.3rem;
-    font-size: 0.85rem;
-    font-family: 'IBM Plex Mono', monospace;
-    transition: all 0.2s;
-    color: #555;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: flex;
-    align-items: center;
+    padding: 0.7rem 1rem; cursor: pointer; border-radius: 6px;
+    margin-bottom: 0.3rem; font-size: 0.85rem; font-family: 'IBM Plex Mono', monospace;
+    transition: all 0.2s; color: #555; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center;
   }
-
   .audio-dot {
-    width: 6px;
-    height: 6px;
-    background: #00F5FF;
-    border-radius: 50%;
-    margin-right: 0.7rem;
-    box-shadow: 0 0 5px #00F5FF;
-    flex-shrink: 0;
+    width: 6px; height: 6px; background: #00F5FF; border-radius: 50%;
+    margin-right: 0.7rem; box-shadow: 0 0 5px #00F5FF; flex-shrink: 0;
   }
+  li:hover { background: #0a0a0a; color: #eee; }
+  li.active { background: #0a0a0a; color: #00F5FF; font-weight: 500; }
 
-  li:hover {
-    background: #0a0a0a;
-    color: #eee;
-  }
-
-  li.active {
-    background: #0a0a0a;
-    color: #00F5FF;
-    font-weight: 500;
-  }
-
-  .floating-toggle {
-    position: fixed;
-    top: 1.5rem;
-    left: 1.5rem;
-    z-index: 100;
-    background: #000;
-    border: 1px solid #111;
-    color: #00F5FF;
-    width: 2.5rem;
-    height: 2.5rem;
-    cursor: pointer;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    transition: all 0.3s;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-  }
-
-  .floating-toggle.visible {
-    display: flex;
-  }
-
-  .floating-toggle:hover {
-    border-color: #00F5FF;
-    box-shadow: 0 0 15px rgba(0, 245, 255, 0.2);
-  }
-
+  /* Player */
   .sidebar-player {
     background: #050505;
     padding: 1.5rem;
     border-top: 1px solid #111;
     border-left: 3px solid #00F5FF;
     flex-shrink: 0;
+    transition: all 0.4s;
   }
 
-  .player-controls {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  .play-btn {
-    background: #111;
-    border: 1px solid #222;
-    color: #00F5FF;
-    width: 2.2rem;
-    height: 2.2rem;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    font-size: 1rem;
-  }
-
-  .play-btn:hover {
-    border-color: #00F5FF;
-    box-shadow: 0 0 10px rgba(0, 245, 255, 0.2);
-  }
-
-  .rate-btn {
-    background: none;
-    border: 1px solid #1A1A1A;
-    color: #666;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.65rem;
-    padding: 4px 8px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: all 0.2s;
-    margin-left: auto;
-  }
-
-  .rate-btn:hover {
-    color: #00F5FF;
-    border-color: #00F5FF;
-    background: rgba(0, 245, 255, 0.05);
-  }
-
-  .player-meta {
+  .sidebar-player.mini-player {
+    padding: 1rem 0.5rem;
+    border-left: none;
+    border-top: 2px solid #00F5FF;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 10px;
   }
 
-  .player-label {
-    font-size: 0.55rem;
-    color: #444;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    font-family: 'IBM Plex Mono', monospace;
+  .player-controls { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+  .sidebar-player.mini-player .player-controls { margin-bottom: 0; }
+
+  .play-btn {
+    background: #111; border: 1px solid #222; color: #00F5FF;
+    width: 2.2rem; height: 2.2rem; border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; font-size: 1rem;
+  }
+  .play-btn:hover { border-color: #00F5FF; box-shadow: 0 0 10px rgba(0, 245, 255, 0.2); }
+
+  .rate-btn {
+    background: none; border: 1px solid #1A1A1A; color: #666;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+    padding: 4px 8px; cursor: pointer; border-radius: 4px; margin-left: auto;
   }
 
-  .player-time {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.7rem;
-    color: #888;
-  }
+  .player-meta { display: flex; flex-direction: column; }
+  .player-label { font-size: 0.55rem; color: #444; letter-spacing: 0.2em; text-transform: uppercase; }
+  .player-time { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: #888; }
 
-  .timeline-container {
-    width: 100%;
-    cursor: pointer;
-  }
+  .timeline-container { width: 100%; cursor: pointer; }
+  .timeline-bg { width: 100%; height: 2px; background: #111; position: relative; }
+  .timeline-progress { position: absolute; top: 0; left: 0; height: 100%; background: #00F5FF; }
 
-  .timeline-bg {
-    width: 100%;
-    height: 2px;
+  .mini-progress-vertical {
+    width: 4px;
+    height: 60px;
     background: #111;
+    border-radius: 2px;
     position: relative;
+    overflow: hidden;
   }
-
-  .timeline-progress {
+  .mini-progress-fill {
     position: absolute;
-    top: 0;
+    bottom: 0;
     left: 0;
-    height: 100%;
+    width: 100%;
     background: #00F5FF;
     box-shadow: 0 0 8px #00F5FF;
+    transition: height 0.1s linear;
   }
 
   main {
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: #050505;
-    padding: 4rem 3.5rem;
-    display: block;
-    border-left: 1px solid #111;
+    height: 100%; overflow-y: auto; overflow-x: hidden;
+    background: #050505; padding: 4rem 3.5rem; display: block; border-left: 1px solid #111;
   }
+  article { width: 100%; max-width: 900px; margin: 0 auto; line-height: 1.8; color: #d4d4d4; }
 
-  article {
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto;
-    line-height: 1.8;
-    color: #d4d4d4;
-  }
-
-  :global(h1, h2, h3, h4) {
-    font-family: 'Space Grotesk', sans-serif;
-    color: #fff;
-    margin-top: 2.5em;
-    font-weight: 500;
-  }
-
+  :global(h1, h2, h3, h4) { font-family: 'Space Grotesk', sans-serif; color: #fff; margin-top: 2.5em; font-weight: 500; }
   :global(h1) { font-size: 2.8rem; border-bottom: 1px solid #1A1A1A; padding-bottom: 1.5rem; }
   :global(h2) { font-size: 1.8rem; color: #00F5FF; opacity: 0.9; }
 
-  :global(pre) {
-    background: #000;
-    color: #a0a0a0;
-    padding: 2rem;
-    border-radius: 4px;
-    overflow-x: auto;
-    font-size: 0.85rem;
-    line-height: 1.6;
-    margin: 2rem 0;
-    border: 1px solid #111;
-  }
-
-  :global(code) {
-    font-family: 'IBM Plex Mono', monospace;
-    background: #111;
-    color: #00F5FF;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-size: 0.85em;
-  }
-
-  :global(blockquote) {
-    border-left: 3px solid #00F5FF;
-    margin: 3rem 0;
-    padding: 0.5rem 2.5rem;
-    color: #888;
-    font-style: italic;
-    background: rgba(0, 245, 255, 0.02);
-  }
-
-  main::-webkit-scrollbar, .sidebar-scroll-area::-webkit-scrollbar {
-    width: 6px;
-  }
-  main::-webkit-scrollbar-track, .sidebar-scroll-area::-webkit-scrollbar-track {
-    background: #050505;
-  }
-  main::-webkit-scrollbar-thumb, .sidebar-scroll-area::-webkit-scrollbar-thumb {
-    background: #111;
-  }
-  main::-webkit-scrollbar-thumb:hover, .sidebar-scroll-area::-webkit-scrollbar-thumb:hover {
-    background: #00F5FF;
-  }
+  main::-webkit-scrollbar, .sidebar-scroll-area::-webkit-scrollbar { width: 6px; }
+  main::-webkit-scrollbar-track, .sidebar-scroll-area::-webkit-scrollbar-track { background: #050505; }
+  main::-webkit-scrollbar-thumb, .sidebar-scroll-area::-webkit-scrollbar-thumb { background: #111; }
+  main::-webkit-scrollbar-thumb:hover, .sidebar-scroll-area::-webkit-scrollbar-thumb:hover { background: #00F5FF; }
 </style>
