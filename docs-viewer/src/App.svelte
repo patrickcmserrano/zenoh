@@ -99,7 +99,7 @@
       
       const foundAudio = audioMap[docPath] || audioMap[docPath.replace('docs/', '')];
       if (foundAudio) {
-        audioSrc = foundAudio;
+        audioSrc = import.meta.env.BASE_URL + foundAudio.replace(/^\//, '');
       } else {
         audioSrc = '';
       }
