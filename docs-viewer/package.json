@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "predev": "find ../docs ../co-creation -name '*.md' | sed 's|^../||' > public/docs-list.json && echo 'ROOT_README.md' >> public/docs-list.json && node -e \"const fs = require('fs'); const docs = fs.readFileSync('public/docs-list.json', 'utf8').trim().split('\\n'); fs.writeFileSync('public/docs-list.json', JSON.stringify(docs));\"",
-    "prebuild": "rm -rf public/docs public/co-creation && cp -rL ../docs public/docs && cp -rL ../co-creation public/co-creation && cp ../README.md public/ROOT_README.md && find public/docs public/co-creation -maxdepth 2 -name '*.md' | sed 's|public/||' > public/docs-list.json && echo 'ROOT_README.md' >> public/docs-list.json && node -e \"const fs = require('fs'); const docs = fs.readFileSync('public/docs-list.json', 'utf8').trim().split('\\n'); fs.writeFileSync('public/docs-list.json', JSON.stringify(docs));\""
+    "prebuild": "rm -rf public/docs public/co-creation public/ROOT_README.md && cp -rL ../docs public/docs && cp -rL ../co-creation public/co-creation && cp -f ../README.md public/ROOT_README.md && find public/docs public/co-creation -maxdepth 2 -name '*.md' | sed 's|public/||' > public/docs-list.json && echo 'ROOT_README.md' >> public/docs-list.json && node -e \"const fs = require('fs'); const docs = fs.readFileSync('public/docs-list.json', 'utf8').trim().split('\\n').filter(Boolean); fs.writeFileSync('public/docs-list.json', JSON.stringify(docs));\""
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
