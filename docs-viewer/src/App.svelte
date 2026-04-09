@@ -167,11 +167,8 @@
               <p>← GENESIS</p>
             </div>
           {:else}
-            <div class="header-icon" onclick={toggleSidebar} role="button" tabindex="0">Z</div>
+            <div class="header-icon" onclick={backToGenesis} role="button" tabindex="0" title="Voltar para Gênese">Z</div>
           {/if}
-          <button class="collapse-btn-inner" onclick={toggleSidebar} title="Alternar Barra (Ctrl+B)">
-            {sidebarCollapsed ? '→' : '←'}
-          </button>
         </div>
         
         {#if !sidebarCollapsed}
@@ -191,6 +188,12 @@
             {/each}
           </nav>
         {/if}
+      </div>
+
+      <div class="sidebar-footer" class:collapsed={sidebarCollapsed}>
+        <button class="collapse-btn-footer" onclick={toggleSidebar} title="Alternar Barra (Ctrl+B)">
+          {sidebarCollapsed ? '→' : '← RECOLHER'}
+        </button>
       </div>
 
       {#if audioSrc}
@@ -301,9 +304,13 @@
     top: 0;
     z-index: 10;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     min-height: 100px;
+  }
+
+  .layout.collapsed .sidebar-header {
+    padding: 1.5rem 0.5rem;
   }
 
   .header-icon {
@@ -313,7 +320,11 @@
     color: #00F5FF;
     text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
     cursor: pointer;
-    width: 100%;
+    text-align: center;
+  }
+
+  .header-main {
+    cursor: pointer;
     text-align: center;
   }
 
@@ -333,27 +344,46 @@
     letter-spacing: 0.1em;
   }
 
-  .collapse-btn-inner {
-    background: none;
-    border: 1px solid #111;
-    color: #333;
-    padding: 5px 10px;
+  .sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid #111;
+    display: flex;
+    justify-content: center;
+    background: #000;
+  }
+
+  .sidebar-footer.collapsed {
+    padding: 1rem 0;
+  }
+
+  .collapse-btn-footer {
+    background: #0a0a0a;
+    border: 1px solid #1A1A1A;
+    color: #444;
+    padding: 8px 12px;
     cursor: pointer;
     border-radius: 4px;
-    font-size: 0.8rem;
+    font-size: 0.65rem;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.1em;
     transition: all 0.2s;
+    width: 100%;
   }
 
-  .collapse-btn-inner:hover {
+  .collapse-btn-footer:hover {
     color: #00F5FF;
     border-color: #00F5FF;
+    background: #111;
   }
 
-  .layout.collapsed .collapse-btn-inner {
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    border: none;
+  .sidebar-footer.collapsed .collapse-btn-footer {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
   }
 
   nav { padding: 1rem; flex: 1; }
