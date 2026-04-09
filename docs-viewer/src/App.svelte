@@ -131,7 +131,7 @@
   }
 
   function enterDocs() {
-    window.location.hash = '#' + (selectedDoc || docs[0]);
+    window.location.hash = '#' + (selectedDoc || 'docs/genesis.md');
   }
 
   function backToGenesis() {

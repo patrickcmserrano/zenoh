@@ -32,6 +32,7 @@ AUDIO_MAP  = ROOT / "docs-viewer" / "public" / "audio-map.json"
 
 # Documentos a processar (em ordem de narração)
 DOCS = [
+    "docs/genesis.md",
     "docs/philosophy/constitution.md",
     "docs/philosophy/silicon-ego.md",
     "docs/architecture/overview.md",
