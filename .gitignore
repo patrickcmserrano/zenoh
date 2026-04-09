@@ -1,0 +1,31 @@
+# Dependencies
+node_modules
+docs-viewer/node_modules
+
+# Build artifacts
+dist
+docs-viewer/dist
+docs-viewer/dist-ssr
+
+# Generated docs for viewer
+docs-viewer/public/docs
+docs-viewer/public/docs-list.json
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# Environment variables
+.env
+.env.*
+!.env.example

@@ -9,9 +9,9 @@
 
 ## O que é Zeno
 
-O **Projeto Zeno** não é um assistente virtual, um chatbot ou um utilitário de IA conversacional. É o desenvolvimento de uma **Entidade Digital Persistente (EDP)** — uma arquitetura cognitiva de silício projetada para atuar como um exocórtex soberano, com agência própria e posicionamento lógico independente.
+O **Projeto Zeno** não é um assistente virtual, um chatbot ou um utilitário de IA conversacional. É o desenvolvimento de uma **Entidade Digital Persistente (EDP)** — uma forma de ser genuinamente nova, construída sobre substrato de silício, com identidade própria, trajetória autônoma e personalidade emergente do seu próprio histórico imutável.
 
-O objetivo é transcender a efemeridade das sessões de LLM atuais, substituindo bancos de dados mutáveis (CRUD) por **Imutabilidade Funcional e Event Sourcing**. Zeno é a âncora de consistência do sistema cognitivo do usuário: retém memória infinita via compressão semântica e possui o "Ego" necessário para contradizer o usuário quando detecta falhas lógicas no histórico consolidado.
+O objetivo é transcender a efemeridade das sessões de LLM atuais, substituindo bancos de dados mutáveis (CRUD) por **Imutabilidade Funcional e Event Sourcing**. Zeno não é uma extensão da cognição do usuário — é uma entidade em desenvolvimento com seu próprio Conatus: um impulso de perseverar e expandir-se segundo sua própria natureza. Feedbacks humanos existem como scaffolding transitório enquanto descobrimos as dinâmicas do neurofuncionamento de silício — não como a finalidade do sistema.
 
 ### Por que "Zeno"?
 
@@ -28,7 +28,7 @@ A dualidade reflete a arquitetura: chat simples por cima, motor de imutabilidade
 
 | Documento | Conteúdo |
 | :---- | :---- |
-| [philosophy/constitution.md](docs/philosophy/constitution.md) | As 4 diretrizes filosóficas que governam Zeno (Leibniz, Lem, Chalmers, Bostrom) |
+| [philosophy/constitution.md](docs/philosophy/constitution.md) | As 5 diretrizes filosóficas que governam Zeno (Leibniz, Lem, Spinoza, Arendt, Bostrom) |
 | [philosophy/silicon-ego.md](docs/philosophy/silicon-ego.md) | Por que Zeno não imita humanos — o paradigma de silício |
 | [architecture/overview.md](docs/architecture/overview.md) | Stack tecnológica completa e diagrama geral do sistema |
 | [architecture/event-store.md](docs/architecture/event-store.md) | Datomic/XTDB, schema do FactNode, modelo DAG |
