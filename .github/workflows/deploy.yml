@@ -30,8 +30,8 @@ jobs:
           cache: 'npm'
           cache-dependency-path: docs-viewer/package-lock.json
 
-      - name: Install dependencies (with --legacy-peer-deps for speed)
-        run: cd docs-viewer && npm ci --legacy-peer-deps
+      - name: Install dependencies
+        run: cd docs-viewer && npm install
 
       - name: Build
         run: cd docs-viewer && npm run build
