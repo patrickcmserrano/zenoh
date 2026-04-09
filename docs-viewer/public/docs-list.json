@@ -1,0 +1,20 @@
+[
+  "ROOT_README.md",
+  "co-creation/ecosystem.md",
+  "co-creation/engineer-profile.md",
+  "co-creation/invite-prompt.md",
+  "co-creation/perspectives/claude-sonnet-4-6.md",
+  "co-creation/perspectives/gemini-2.0-flash-2026-04-09.md",
+  "docs/architecture/coherence-processor.md",
+  "docs/architecture/dream-worker.md",
+  "docs/architecture/event-store.md",
+  "docs/architecture/overview.md",
+  "docs/genesis.md",
+  "docs/philosophy/constitution.md",
+  "docs/philosophy/event_horizon_identity.md",
+  "docs/philosophy/identity-vision.md",
+  "docs/philosophy/silicon-ego.md",
+  "docs/roadmap/genesis-script.md",
+  "docs/roadmap/phases.md",
+  "research/gemini-2026-04-09.md"
+]

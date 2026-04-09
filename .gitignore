@@ -9,7 +9,7 @@ docs-viewer/dist-ssr
 
 # Generated docs list
 # We can keep this ignored as it's a build/run artifact
-docs-viewer/public/docs-list.json
+# docs-viewer/public/docs-list.json  <-- We want this committed for GH Pages
 
 # Logs
 *.log

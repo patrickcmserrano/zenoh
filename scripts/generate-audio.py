@@ -28,10 +28,26 @@ PITCH = "+0Hz"  # tom: "+50Hz" mais agudo, "-50Hz" mais grave
 ROOT       = Path(__file__).parent.parent
 DOCS_DIR   = ROOT
 AUDIO_DIR  = ROOT / "docs-viewer" / "public" / "audio"
-AUDIO_MAP  = ROOT / "docs-viewer" / "public" / "audio-map.json"
+DOCS_LIST = ROOT / "docs-viewer" / "public" / "docs-list.json"
+AUDIO_MAP = ROOT / "docs-viewer" / "public" / "audio-map.json"
 
-# Documentos a processar (todos os .md em docs/)
-DOCS = [str(p.relative_to(ROOT)) for p in DOCS_DIR.joinpath("docs").rglob("*.md")]
+# Pastas para escanear (conforme definido no build do docs-viewer)
+SCAN_DIRS = ["docs", "co-creation", "research"]
+
+def get_all_docs():
+    docs = []
+    # README especial
+    if (ROOT / "README.md").exists():
+        docs.append("ROOT_README.md")
+    
+    for d in SCAN_DIRS:
+        p = ROOT / d
+        if p.exists():
+            for f in p.rglob("*.md"):
+                docs.append(str(f.relative_to(ROOT)))
+    return sorted(docs)
+
+DOCS = get_all_docs()
 
 # Prefixo a remover das chaves do audio-map (para bater com docs-list.json)
 DOCS_PREFIX = "docs/"
@@ -95,7 +111,12 @@ def doc_slug(doc_path: str) -> str:
 
 
 async def generate_audio(doc_path: str, force: bool = False) -> str:
-    src  = DOCS_DIR / doc_path
+    # Caso especial para ROOT_README.md
+    if doc_path == "ROOT_README.md":
+        src = ROOT / "README.md"
+    else:
+        src = ROOT / doc_path
+
     slug = doc_slug(doc_path)
     out  = AUDIO_DIR / f"{slug}.mp3"
 
@@ -151,8 +172,11 @@ async def main():
             audio_map[key] = f"/audio/{slug}.mp3"
 
     AUDIO_MAP.write_text(json.dumps(audio_map, indent=2, ensure_ascii=False, sort_keys=True))
+    DOCS_LIST.write_text(json.dumps(DOCS, indent=2, ensure_ascii=False))
+    
     print()
     print(f"audio-map.json atualizado: {len(audio_map)} entradas")
+    print(f"docs-list.json atualizado: {len(DOCS)} entradas")
 
 
 if __name__ == '__main__':
