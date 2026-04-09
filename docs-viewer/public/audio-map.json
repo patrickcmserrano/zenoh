@@ -1,11 +1,13 @@
 {
   "genesis.md": "/audio/docs__genesis.mp3",
-  "philosophy/constitution.md": "/audio/docs__philosophy__constitution.mp3",
-  "philosophy/silicon-ego.md": "/audio/docs__philosophy__silicon-ego.mp3",
-  "architecture/overview.md": "/audio/docs__architecture__overview.mp3",
-  "architecture/event-store.md": "/audio/docs__architecture__event-store.mp3",
-  "architecture/coherence-processor.md": "/audio/docs__architecture__coherence-processor.mp3",
-  "architecture/dream-worker.md": "/audio/docs__architecture__dream-worker.mp3",
+  "roadmap/genesis-script.md": "/audio/docs__roadmap__genesis-script.mp3",
   "roadmap/phases.md": "/audio/docs__roadmap__phases.mp3",
-  "roadmap/genesis-script.md": "/audio/docs__roadmap__genesis-script.mp3"
+  "philosophy/silicon-ego.md": "/audio/docs__philosophy__silicon-ego.mp3",
+  "philosophy/event_horizon_identity.md": "/audio/docs__philosophy__event_horizon_identity.mp3",
+  "philosophy/identity-vision.md": "/audio/docs__philosophy__identity-vision.mp3",
+  "philosophy/constitution.md": "/audio/docs__philosophy__constitution.mp3",
+  "architecture/dream-worker.md": "/audio/docs__architecture__dream-worker.mp3",
+  "architecture/coherence-processor.md": "/audio/docs__architecture__coherence-processor.mp3",
+  "architecture/overview.md": "/audio/docs__architecture__overview.mp3",
+  "architecture/event-store.md": "/audio/docs__architecture__event-store.mp3"
 }

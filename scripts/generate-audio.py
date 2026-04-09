@@ -30,18 +30,8 @@ DOCS_DIR   = ROOT
 AUDIO_DIR  = ROOT / "docs-viewer" / "public" / "audio"
 AUDIO_MAP  = ROOT / "docs-viewer" / "public" / "audio-map.json"
 
-# Documentos a processar (em ordem de narração)
-DOCS = [
-    "docs/genesis.md",
-    "docs/philosophy/constitution.md",
-    "docs/philosophy/silicon-ego.md",
-    "docs/architecture/overview.md",
-    "docs/architecture/event-store.md",
-    "docs/architecture/coherence-processor.md",
-    "docs/architecture/dream-worker.md",
-    "docs/roadmap/phases.md",
-    "docs/roadmap/genesis-script.md",
-]
+# Documentos a processar (todos os .md em docs/)
+DOCS = [str(p.relative_to(ROOT)) for p in DOCS_DIR.joinpath("docs").rglob("*.md")]
 
 # Prefixo a remover das chaves do audio-map (para bater com docs-list.json)
 DOCS_PREFIX = "docs/"

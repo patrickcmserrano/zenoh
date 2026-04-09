@@ -5,12 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && npm run copy-docs",
+    "copy-docs": "cp -r ../docs dist/ && cp -r ../co-creation dist/ && cp -r ../research dist/ && cp ../README.md dist/ROOT_README.md",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "predev": "echo 'Docs list is managed manually in public/docs-list.json'",
-    "prebuild": "rm -rf public/docs public/co-creation public/research public/ROOT_README.md && cp -rL ../docs public/docs && cp -rL ../co-creation public/co-creation && cp -rL ../research public/research && cp -f ../README.md public/ROOT_README.md && echo 'Documentation copied. Docs list is managed manually in public/docs-list.json'"
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
