@@ -1,5 +1,27 @@
 <script>
   let { docs = [], selectedDoc = null, audioMap = {}, onSelect, onBack } = $props();
+
+  function getLabel(doc) {
+    const parts = doc.split('/');
+    const filename = parts.pop().replace('.md', '');
+    
+    // Se houver pastas, construir caminho hierárquico
+    if (parts.length > 0) {
+      const category = parts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' > ');
+      const label = filename
+        .split('-')
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+      return `${category} > ${label}`;
+    }
+    
+    // Se for na raiz, apenas capitalizar
+    const label = filename
+      .split('-')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+    return label;
+  }
 </script>
 
 <aside data-testid="docs-sidebar">
@@ -16,17 +38,16 @@
   <ul>
     {#each docs as doc}
       {@const audioKey = doc.startsWith('docs/') ? doc.substring(5) : doc}
-      {@const label = doc.split('/').pop().replace('.md', '')}
-      <li
-        class:active={selectedDoc === doc}
-        onclick={() => onSelect(doc)}
-        onkeydown={(e) => e.key === 'Enter' && onSelect(doc)}
-        role="button"
-        tabindex="0"
-        title={doc}
-      >
-        {#if audioMap[audioKey]}<span class="has-audio" aria-label="tem áudio">▶</span>{/if}
-        {label}
+      {@const label = getLabel(doc)}
+      <li>
+        <button
+          class:active={selectedDoc === doc}
+          onclick={() => onSelect(doc)}
+          title={doc}
+        >
+          {#if audioMap[audioKey]}<span class="has-audio" aria-label="tem áudio">▶</span>{/if}
+          {label}
+        </button>
       </li>
     {/each}
   </ul>
@@ -88,10 +109,15 @@
     margin: 0;
   }
   li {
+    margin-bottom: 4px;
+  }
+  button {
+    width: 100%;
     padding: 12px 16px;
     cursor: pointer;
+    border: none;
+    background: transparent;
     border-radius: 4px;
-    margin-bottom: 4px;
     font-size: 0.85rem;
     font-family: 'IBM Plex Mono', monospace;
     transition: all 0.2s;
@@ -99,14 +125,15 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: left;
   }
-  li:hover { background: #1a1a1a; color: #fff; }
-  li.active { background: #00F5FF; color: #000; font-weight: 500; }
+  button:hover { background: #1a1a1a; color: #fff; }
+  button.active { background: #00F5FF; color: #000; font-weight: 500; }
   .has-audio {
     font-size: 0.55rem;
     color: #00F5FF;
     margin-right: 5px;
     opacity: 0.7;
   }
-  li.active .has-audio { color: #000; opacity: 1; }
+  button.active .has-audio { color: #000; opacity: 1; }
 </style>
