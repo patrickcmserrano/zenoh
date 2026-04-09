@@ -1,0 +1,107 @@
+\documentclass[10pt,a4paper,sans]{moderncv}
+
+\moderncvstyle{classic}
+\moderncvcolor{blue}
+
+\usepackage[scale=0.90]{geometry}
+\setlength{\hintscolumnwidth}{2.3cm}
+
+\name{Patrick Serrano}{}
+\title{Clojure Engineer | Functional Systems \& AI Integration}
+\email{patrickcmserrano@gmail.com}
+\social[linkedin]{patrickcmserrano}
+\social[github]{patrickcmserrano}
+
+\begin{document}
+\makecvtitle
+
+\section{Summary}
+Clojure engineer with 7+ years building production systems in Clojure and ClojureScript across fintech, quantitative trading, and distributed data platforms. Deep command of functional programming principles — immutability, pure functions, data-oriented design — and the full Clojure ecosystem (re-frame, Reagent, Fulcro, Datomic, Onyx, shadow-cljs). Experienced in designing event-driven architectures, streaming data pipelines, and high-throughput APIs. Currently at the intersection of functional systems and AI integration: building LLM-powered pipelines and exploring RAG architectures as a natural extension of my background in data modeling and algorithmic decision systems. Actively uses Claude Code and Cursor as primary productivity tools.
+
+\section{Skills}
+\cvitem{Clojure Ecosystem}{Clojure, ClojureScript, re-frame, Reagent, Fulcro, Datomic, Onyx, shadow-cljs, core.async}
+\cvitem{AI / Data}{LLM API integration (OpenAI, Gemini, Anthropic), RAG pipelines, vector databases (Qdrant), prompt engineering, PostgreSQL (vector extensions)}
+\cvitem{Architecture}{Event-Driven, CQRS, Event Sourcing, Microservices, Data Pipelines, Streaming}
+\cvitem{Databases}{Datomic, PostgreSQL, DynamoDB, MongoDB}
+\cvitem{Messaging}{NATS JetStream, Kafka, AWS SQS}
+\cvitem{Other Languages}{Golang, Python, TypeScript}
+\cvitem{Infra}{AWS, Docker, Kubernetes, CI/CD, Github Actions}
+\cvitem{AI Coding Tools}{Claude Code (Anthropic), Cursor, Antigravity}
+\cvitem{LLM Platforms}{Gemini (Google AI Studio), OpenAI API, Anthropic API}
+
+\section{Professional Experience}
+
+\cventry{Jul 2025 -- Present}{Quantitative Trading Engine (Ark Engine)}{Proprietary System}{}{}{%
+High-performance algorithmic trading engine built from scratch, focused on sub-millisecond latency, automated decision-making, and absolute data integrity.\newline{}
+\begin{itemize}
+    \item Architected a multi-stage decision pipeline handling real-time market data streams — structurally analogous to LLM orchestration pipelines: ingest, process, decide, act, record;
+    \item Migrated performance-critical modules from Python to Golang, achieving drastic latency reduction and increased throughput under sustained load;
+    \item Implemented exactly-once event pipelines with NATS JetStream, ensuring immutability and full auditability of all financial records;
+    \item Designed in-memory state management and caching strategies to sustain high event throughput without performance degradation.
+\end{itemize}
+Stack: Golang, Python, NATS JetStream, TypeScript, Docker, Event-Driven Architecture
+}
+
+\cventry{Dec 2025 -- Present}{BDL Assetto (Open-Source / Community)}{Motorsport Telemetry System}{}{}{%
+Real-time telemetry and distributed state management system for multiplayer racing simulation, processing high-frequency concurrent sensor data.\newline{}
+\begin{itemize}
+    \item Refactored a monolithic architecture to support concurrent multi-client environments, resolving critical race conditions and I/O synchronization issues in high-frequency loops;
+    \item Implemented per-client state isolation with complex buffering and data alignment windows, applying functional concurrency patterns;
+    \item Modeled dynamic threshold services for real-time edge case handling in sensor data streams;
+    \item Built a custom telemetry dashboard as an observability layer over the native system, enabling surgical real-time diagnostics.
+\end{itemize}
+Stack: Python, Concurrency, Real-Time State Management, Observability
+}
+
+\cventry{2022 -- 2025}{FinTech Platform (Payment Processing)}{Clojure / Full Stack}{}{}{%
+Automated financial workflows and large-scale payment integrations across multiple gateways and e-commerce platforms, built entirely in Clojure.\newline{}
+\begin{itemize}
+    \item Designed and maintained high-availability REST APIs integrating multiple payment gateways (Adyen, Cielo, Getnet) and the VTEX platform, ensuring transaction resilience and full traceability;
+    \item Refactored the financial processing engine from a tightly coupled design to a modular Polylith architecture — clear component boundaries, improved test coverage, and accelerated maintenance cycles;
+    \item Built streaming data pipelines using \textbf{Onyx} for asynchronous transaction processing, with \textbf{Datomic} as the immutable, append-only data store — a natural fit for audit-critical financial data;
+    \item Developed real-time operational dashboards with live alerts on payment routing and approval intelligence, increasing system observability for both engineering and business teams;
+    \item Led technical quality through rigorous code reviews, pair programming sessions, and mentorship of junior and mid-level engineers.
+\end{itemize}
+Stack: Clojure, ClojureScript, Onyx, Datomic, REST APIs, AWS, Microservices
+}
+
+\cventry{2020 -- 2021}{E-commerce CMS Platform}{ClojureScript / Full Stack}{}{}{%
+Content management platform for high-volume product catalog management with reactive interfaces.\newline{}
+\begin{itemize}
+    \item Built reactive frontend interfaces with ClojureScript and React, managing complex component state and data flows;
+    \item Developed real-time dashboards for media asset and metadata management;
+    \item Optimized AWS infrastructure with auto-scaling to handle traffic spikes without performance degradation.
+\end{itemize}
+Stack: ClojureScript, React, TypeScript, Node.js, AWS, REST APIs
+}
+
+\cventry{2019}{Real Estate Platform}{ClojureScript / Mobile}{}{}{%
+Web and mobile application for decentralized property advertising, negotiation, and sales.\newline{}
+\begin{itemize}
+    \item Built the full web and mobile application from scratch using \textbf{Fulcro} and \textbf{React Native};
+    \item Modeled efficient data flows between clients and real estate agents using Fulcro's graph-based data model;
+    \item Iterated continuously on UX based on real user feedback.
+\end{itemize}
+Stack: ClojureScript, Fulcro, Reagent, React Native
+}
+
+\cventry{2018}{FinTech Gateway (Payment Processing)}{ClojureScript}{}{}{%
+Web application for a payment gateway focused on efficient and secure transaction processing.\newline{}
+\begin{itemize}
+    \item Built the frontend application and shipped new payment features in production;
+    \item First hands-on work with Clojure/ClojureScript in a commercial financial system, establishing strong foundations in functional UI patterns and financial data flows.
+\end{itemize}
+Stack: ClojureScript, Fulcro, REST APIs
+}
+
+\section{Education}
+\cventry{2024 -- Present}{Bachelor's in Software Engineering}{Descomplica Digital University}{}{}{}
+\cventry{2015 -- 2018}{Bachelor's in Physics}{Universidade Federal Fluminense}{}{}{}
+
+\section{Languages}
+\cvitemwithcomment{Portuguese}{Native}{}
+\cvitemwithcomment{English}{Upper-Intermediate}{}
+\cvitemwithcomment{German}{Basic}{}
+\cvitemwithcomment{Spanish}{Basic}{}
+
+\end{document}
