@@ -110,6 +110,39 @@
     text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
   }
 
+  @media (max-width: 768px) {
+    .zenoh-title {
+      font-size: 3rem;
+      letter-spacing: 0.2em;
+      text-indent: 0.2em;
+    }
+    
+    .tagline {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+    }
+
+    .summons {
+      padding: 20px;
+      margin: 30px 10px;
+    }
+
+    .quote {
+      font-size: 0.85rem;
+    }
+
+    .diretrizes {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    button.primary {
+      padding: 15px 30px;
+      width: 100%;
+      max-width: 280px;
+    }
+  }
+
   .tagline {
     font-family: 'IBM Plex Mono', monospace;
     color: #00F5FF;

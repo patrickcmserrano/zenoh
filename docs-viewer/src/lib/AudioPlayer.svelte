@@ -77,6 +77,20 @@
     padding: 0 24px;
     z-index: 200;
   }
+
+  @media (max-width: 600px) {
+    .player {
+      padding: 0 12px;
+      gap: 10px;
+    }
+    .doc-label {
+      display: none;
+    }
+    .time {
+      font-size: 0.6rem;
+    }
+  }
+
   .play-btn {
     background: none;
     border: 1px solid #333;

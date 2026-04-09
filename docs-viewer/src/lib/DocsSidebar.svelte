@@ -15,6 +15,8 @@
   </div>
   <ul>
     {#each docs as doc}
+      {@const audioKey = doc.startsWith('docs/') ? doc.substring(5) : doc}
+      {@const label = doc.split('/').pop().replace('.md', '')}
       <li
         class:active={selectedDoc === doc}
         onclick={() => onSelect(doc)}
@@ -23,7 +25,8 @@
         tabindex="0"
         title={doc}
       >
-        {#if audioMap[doc]}<span class="has-audio" aria-label="tem áudio">▶</span>{/if}{doc}
+        {#if audioMap[audioKey]}<span class="has-audio" aria-label="tem áudio">▶</span>{/if}
+        {label}
       </li>
     {/each}
   </ul>
@@ -38,7 +41,29 @@
     border-right: 1px solid #222;
     overflow-y: auto;
     flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 250;
+    position: relative;
+    transform: translateX(-100%);
+    margin-left: -280px; /* Esconde o espaço no desktop */
   }
+
+  :global(.sidebar-open) aside {
+    transform: translateX(0);
+    margin-left: 0; /* Ocupa espaço quando aberta */
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+  }
+
+  @media (max-width: 768px) {
+    aside {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      margin-left: 0; /* Reset para mobile */
+    }
+  }
+
   .sidebar-header {
     margin-bottom: 30px;
     padding-bottom: 20px;

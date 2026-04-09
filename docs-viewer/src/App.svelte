@@ -15,8 +15,8 @@
   :global(body) {
     margin: 0;
     font-family: 'Space Grotesk', sans-serif;
-    color: #333;
+    color: #e0e0e0;
     line-height: 1.6;
-    background: #fff;
+    background: #050505;
   }
 </style>

@@ -37,44 +37,53 @@
   article {
     max-width: 800px;
     margin: 0 auto;
-    color: #1a1a1a;
+    color: #d4d4d4;
   }
   :global(h1, h2, h3, h4) {
     font-family: 'Space Grotesk', sans-serif;
-    color: #000;
+    color: #fff;
     margin-top: 2em;
     letter-spacing: -0.02em;
   }
+  
+  @media (max-width: 600px) {
+    :global(h1) { font-size: 1.8rem; }
+    :global(h2) { font-size: 1.5rem; }
+    :global(h3) { font-size: 1.2rem; }
+    :global(table) { display: block; overflow-x: auto; }
+  }
+
   :global(pre) {
-    background: #0a0a0a;
-    color: #d4d4d4;
+    background: #050505;
+    color: #00F5FF;
     padding: 24px;
     border-radius: 8px;
     overflow-x: auto;
     font-size: 0.85rem;
     line-height: 1.5;
     margin: 20px 0;
-    border: 1px solid #222;
+    border: 1px solid #1a1a1a;
   }
   :global(code) { font-family: 'IBM Plex Mono', monospace; }
   :global(blockquote) {
     border-left: 3px solid #00F5FF;
     margin: 30px 0;
     padding: 10px 30px;
-    color: #555;
+    color: #888;
     font-style: italic;
-    background: #f9f9f9;
+    background: rgba(0, 245, 255, 0.03);
   }
   :global(table) { border-collapse: collapse; width: 100%; margin: 20px 0; }
-  :global(th, td) { border: 1px solid #eee; padding: 10px 14px; font-size: 0.9rem; }
-  :global(th) { background: #f9f9f9; font-weight: 600; }
+  :global(th, td) { border: 1px solid #222; padding: 10px 14px; font-size: 0.9rem; }
+  :global(th) { background: #111; font-weight: 600; color: #00F5FF; }
 
   /* Highlight do parágrafo sendo lido */
   :global(.reading) {
-    background: rgba(0, 245, 255, 0.07);
+    background: rgba(0, 245, 255, 0.15);
     border-radius: 4px;
-    outline: 1px solid rgba(0, 245, 255, 0.2);
+    outline: 1px solid rgba(0, 245, 255, 0.3);
     outline-offset: 4px;
     transition: background 0.3s, outline 0.3s;
+    color: #fff;
   }
 </style>
